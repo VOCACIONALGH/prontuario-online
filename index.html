@@ -6,7 +6,6 @@
     <meta name="theme-color" content="#007BFF">
     <title>Prontuário Eletrônico</title>
 
-    <!-- Link para o Manifesto -->
     <link rel="manifest" href="manifest.json">
 
     <style>
@@ -46,7 +45,6 @@
     <button onclick="mostrarAdministrador()">Modo Administrador</button>
     <button onclick="mostrarUsuario()">Modo Usuário</button>
 
-    <!-- Modo Administrador -->
     <div id="admin" class="hidden">
         <h2>Administrador</h2>
         <input id="tutor" placeholder="Nome do Tutor">
@@ -59,7 +57,6 @@
         <button onclick="salvarProntuario()">Salvar</button>
     </div>
 
-    <!-- Modo Usuário -->
     <div id="usuario" class="hidden">
         <h2>Tutor</h2>
         <input id="buscaTutor" placeholder="Nome do Tutor">
@@ -69,18 +66,17 @@
     </div>
 </div>
 
-<!-- Firebase SDK -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
-        apiKey: "SUA_API_KEY",
-        authDomain: "SEU_PROJETO.firebaseapp.com",
-        projectId: "SEU_PROJETO",
-        storageBucket: "SEU_PROJETO.appspot.com",
-        messagingSenderId: "ID",
-        appId: "APP_ID"
+        apiKey: "AIzaSyAKc5DfT3Qh2ShzJ5Qy9K9ViwBlRH2-b7A",
+        authDomain: "prontuario-online-d817a.firebaseapp.com",
+        projectId: "prontuario-online-d817a",
+        storageBucket: "prontuario-online-d817a.firebasestorage.app",
+        messagingSenderId: "1025513812956",
+        appId: "1:1025513812956:web:c58ba8ea5acb9f88379519"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -138,7 +134,6 @@
         });
     };
 
-    // Registro do Service Worker
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js');
     }
