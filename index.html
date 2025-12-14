@@ -1,140 +1,148 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prontuário Eletrônico</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#007BFF">
+    <title>Prontuário Eletrônico</title>
 
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: #f4f4f4;
-    padding: 20px;
-}
-.container {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    max-width: 800px;
-    margin: auto;
-}
-.hidden { display: none; }
-button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    background: #007BFF;
-    color: white;
-    border: none;
-}
-.prontuario {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-top: 10px;
-}
-</style>
+    <!-- Link para o Manifesto -->
+    <link rel="manifest" href="manifest.json">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 800px;
+            margin: auto;
+        }
+        .hidden { display: none; }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background: #007BFF;
+            color: white;
+            border: none;
+        }
+        .prontuario {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
-<h1>Prontuário Eletrônico</h1>
+    <h1>Prontuário Eletrônico</h1>
+    
+    <button onclick="mostrarAdministrador()">Modo Administrador</button>
+    <button onclick="mostrarUsuario()">Modo Usuário</button>
 
-<button onclick="mostrarAdministrador()">Modo Administrador</button>
-<button onclick="mostrarUsuario()">Modo Usuário</button>
+    <!-- Modo Administrador -->
+    <div id="admin" class="hidden">
+        <h2>Administrador</h2>
+        <input id="tutor" placeholder="Nome do Tutor">
+        <input id="senhaTutor" type="password" placeholder="Senha do Tutor">
+        <input id="paciente" placeholder="Paciente">
+        <textarea id="queixa" placeholder="Queixa"></textarea>
+        <textarea id="tratamento" placeholder="Tratamento"></textarea>
+        <textarea id="resultado" placeholder="Resultado"></textarea>
+        <textarea id="orientacoes" placeholder="Orientações"></textarea>
+        <button onclick="salvarProntuario()">Salvar</button>
+    </div>
 
-<div id="admin" class="hidden">
-<h2>Administrador</h2>
-<input id="tutor" placeholder="Nome do Tutor">
-<input id="senhaTutor" type="password" placeholder="Senha do Tutor">
-<input id="paciente" placeholder="Paciente">
-<textarea id="queixa" placeholder="Queixa"></textarea>
-<textarea id="tratamento" placeholder="Tratamento"></textarea>
-<textarea id="resultado" placeholder="Resultado"></textarea>
-<textarea id="orientacoes" placeholder="Orientações"></textarea>
-<button onclick="salvarProntuario()">Salvar</button>
+    <!-- Modo Usuário -->
+    <div id="usuario" class="hidden">
+        <h2>Tutor</h2>
+        <input id="buscaTutor" placeholder="Nome do Tutor">
+        <input id="buscaSenha" type="password" placeholder="Senha">
+        <button onclick="carregarProntuariosTutor()">Acessar</button>
+        <div id="listaProntuarios"></div>
+    </div>
 </div>
 
-<div id="usuario" class="hidden">
-<h2>Tutor</h2>
-<input id="buscaTutor" placeholder="Nome do Tutor">
-<input id="buscaSenha" type="password" placeholder="Senha">
-<button onclick="carregarProntuariosTutor()">Acessar</button>
-<div id="listaProntuarios"></div>
-</div>
-</div>
-
-<!-- FIREBASE -->
+<!-- Firebase SDK -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* 🔥 COLE AQUI SUA CONFIGURAÇÃO DO FIREBASE */
-const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_PROJETO.firebaseapp.com",
-  projectId: "SEU_PROJETO",
-  storageBucket: "SEU_PROJETO.appspot.com",
-  messagingSenderId: "ID",
-  appId: "APP_ID"
-};
+    const firebaseConfig = {
+        apiKey: "SUA_API_KEY",
+        authDomain: "SEU_PROJETO.firebaseapp.com",
+        projectId: "SEU_PROJETO",
+        storageBucket: "SEU_PROJETO.appspot.com",
+        messagingSenderId: "ID",
+        appId: "APP_ID"
+    };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-window.mostrarAdministrador = () => {
-    admin.classList.remove("hidden");
-    usuario.classList.add("hidden");
-};
+    window.mostrarAdministrador = () => {
+        admin.classList.remove("hidden");
+        usuario.classList.add("hidden");
+    };
 
-window.mostrarUsuario = () => {
-    admin.classList.add("hidden");
-    usuario.classList.remove("hidden");
-};
+    window.mostrarUsuario = () => {
+        admin.classList.add("hidden");
+        usuario.classList.remove("hidden");
+    };
 
-window.salvarProntuario = async () => {
-    await addDoc(collection(db, "prontuarios"), {
-        tutor: tutor.value,
-        senha: senhaTutor.value,
-        paciente: paciente.value,
-        queixa: queixa.value,
-        tratamento: tratamento.value,
-        resultado: resultado.value,
-        orientacoes: orientacoes.value
-    });
-    alert("Prontuário salvo online!");
-};
+    window.salvarProntuario = async () => {
+        await addDoc(collection(db, "prontuarios"), {
+            tutor: tutor.value,
+            senha: senhaTutor.value,
+            paciente: paciente.value,
+            queixa: queixa.value,
+            tratamento: tratamento.value,
+            resultado: resultado.value,
+            orientacoes: orientacoes.value
+        });
+        alert("Prontuário salvo online!");
+    };
 
-window.carregarProntuariosTutor = async () => {
-    listaProntuarios.innerHTML = "";
+    window.carregarProntuariosTutor = async () => {
+        listaProntuarios.innerHTML = "";
 
-    const q = query(
-        collection(db, "prontuarios"),
-        where("tutor", "==", buscaTutor.value),
-        where("senha", "==", buscaSenha.value)
-    );
+        const q = query(
+            collection(db, "prontuarios"),
+            where("tutor", "==", buscaTutor.value),
+            where("senha", "==", buscaSenha.value)
+        );
 
-    const querySnapshot = await getDocs(q);
+        const querySnapshot = await getDocs(q);
 
-    if (querySnapshot.empty) {
-        alert("Dados incorretos ou nenhum prontuário.");
-        return;
+        if (querySnapshot.empty) {
+            alert("Dados incorretos ou nenhum prontuário.");
+            return;
+        }
+
+        querySnapshot.forEach(doc => {
+            const p = doc.data();
+            listaProntuarios.innerHTML += `
+                <div class="prontuario">
+                    <b>Paciente:</b> ${p.paciente}<br>
+                    <b>Queixa:</b> ${p.queixa}<br>
+                    <b>Tratamento:</b> ${p.tratamento}<br>
+                    <b>Resultado:</b> ${p.resultado}<br>
+                    <b>Orientações:</b> ${p.orientacoes}
+                </div>`;
+        });
+    };
+
+    // Registro do Service Worker
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
     }
-
-    querySnapshot.forEach(doc => {
-        const p = doc.data();
-        listaProntuarios.innerHTML += `
-        <div class="prontuario">
-            <b>Paciente:</b> ${p.paciente}<br>
-            <b>Queixa:</b> ${p.queixa}<br>
-            <b>Tratamento:</b> ${p.tratamento}<br>
-            <b>Resultado:</b> ${p.resultado}<br>
-            <b>Orientações:</b> ${p.orientacoes}
-        </div>`;
-    });
-};
 </script>
 
 </body>
 </html>
-
