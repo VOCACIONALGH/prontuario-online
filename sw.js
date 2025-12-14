@@ -1,4 +1,4 @@
-const CACHE_NAME = "prontuario-cache-v1";
+const CACHE_NAME = "prontuario-cache-v2";
 
 const FILES_TO_CACHE = [
   "./",
@@ -39,3 +39,4 @@ self.addEventListener("fetch", event => {
     })
   );
 });
+
